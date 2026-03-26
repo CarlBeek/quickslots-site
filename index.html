@@ -1,109 +1,52 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>EIP-8198 — Quick Slots</title>
-        <meta
-            name="description"
-            content="Variable slot timing infrastructure for Ethereum. Reduce slot duration, improve UX, tighten DEX pricing, compress MEV."
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
-            rel="stylesheet"
-        />
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EIP-8198 — Quick Slots</title>
+<meta name="description" content="Variable slot timing infrastructure for Ethereum. Reduce slot duration, improve UX, tighten DEX pricing, compress MEV." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+body {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1rem;
+    font-weight: 400;
+    background: #f4f1eb;
+    color: #1a1a18;
+    line-height: 1.6;
+    padding: 3rem 2rem;
+    max-width: 68rem;
+    margin: 0 auto;
+}
+a { color: inherit; }
+h1, h2, h3 { font-size: inherit; font-weight: 400; }
+pre {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.5;
+    white-space: pre;
+    overflow-x: auto;
+}
+section, header, nav, footer { margin-bottom: 3rem; }
+p { max-width: 72ch; margin-bottom: 1rem; }
+@media (max-width: 768px) {
+    html { font-size: 12px; }
+    body { padding: 1.5rem 1rem; }
+}
+</style>
+</head>
+<body>
 
-            html {
-                font-size: 14px;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-            }
-
-            body {
-                font-family: "IBM Plex Mono", monospace;
-                font-size: 1rem;
-                font-weight: 400;
-                background: #f4f1eb;
-                color: #1a1a18;
-                line-height: 1.6;
-                padding: 3rem 2rem;
-                max-width: 68rem;
-                margin: 0 auto;
-            }
-
-            a {
-                color: inherit;
-            }
-
-            code {
-                font-family: inherit;
-                font-size: inherit;
-            }
-
-            h1, h2, h3 {
-                font-size: inherit;
-                font-weight: 700;
-            }
-
-            pre {
-                font-family: inherit;
-                font-size: inherit;
-                line-height: 1.5;
-                white-space: pre;
-                overflow-x: auto;
-            }
-
-            .block {
-                margin-bottom: 3rem;
-            }
-
-            .rule {
-                margin: 1.5rem 0;
-            }
-
-            .indent {
-                padding-left: 2ch;
-            }
-
-            .indent-2 {
-                padding-left: 4ch;
-            }
-
-            .bold {
-                font-weight: 700;
-            }
-
-            .spread > * + * {
-                margin-top: 1rem;
-            }
-
-            p {
-                max-width: 72ch;
-            }
-
-            @media (max-width: 768px) {
-                html { font-size: 12px; }
-                body { padding: 1.5rem 1rem; }
-            }
-        </style>
-    </head>
-    <body>
-
-        <!-- ════════════════════════════════════════════ -->
-        <!--  DOCUMENT HEADER                            -->
-        <!-- ════════════════════════════════════════════ -->
-
-        <header class="block">
-<pre>
-╔══════════════════════════════════════════════════════════════════════╗
+<header>
+<pre>╔══════════════════════════════════════════════════════════════════════╗
 ║                                                                      ║
 ║  ETHEREUM IMPROVEMENT PROPOSAL 8198                                  ║
 ║                                                                      ║
@@ -113,15 +56,10 @@
 ║  STATUS   Draft                  TYPE   Standards Track / Core       ║
 ║  AUTHOR   Carl Beekhuizen        DATE   2026-03-17                   ║
 ║                                                                      ║
-╚══════════════════════════════════════════════════════════════════════╝
-</pre>
-        </header>
+╚══════════════════════════════════════════════════════════════════════╝</pre>
+</header>
 
-        <!-- ════════════════════════════════════════════ -->
-        <!--  TABLE OF CONTENTS                          -->
-        <!-- ════════════════════════════════════════════ -->
-
-        <nav class="block">
+<nav>
 <pre>CONTENTS
 ────────────────────────────────────────────────────────────────────────
 01 ── <a href="#abstract">Abstract</a>
@@ -131,226 +69,176 @@
 05 ── <a href="#specification">Specification</a>
 06 ── <a href="#references">References</a>
 ────────────────────────────────────────────────────────────────────────</pre>
-        </nav>
+</nav>
 
-        <!-- ════════════════════════════════════════════ -->
-        <!--  SEC 01 — ABSTRACT                          -->
-        <!-- ════════════════════════════════════════════ -->
-
-        <section class="block" id="abstract">
+<section id="abstract">
 <pre>SEC 01 ── ABSTRACT
 ════════════════════════════════════════════════════════════════════════</pre>
-            <div class="spread" style="margin-top: 1rem;">
-                <p>
-                    <strong>Make slot duration a runtime configuration. Then reduce it.</strong>
-                </p>
-                <p>
-                    This EIP turns SLOT_DURATION_MS from a compile-time constant
-                    into a fork-activated runtime parameter on the consensus layer,
-                    then uses that infrastructure to reduce slot duration from
-                    12&nbsp;seconds to 8&nbsp;seconds. Block gas limits and blob
-                    parameters scale proportionally to maintain constant throughput
-                    per unit time.
-                </p>
-            </div>
-        </section>
 
-        <!-- ════════════════════════════════════════════ -->
-        <!--  SEC 02 — THE PROBLEM                       -->
-        <!-- ════════════════════════════════════════════ -->
+<pre>╔══════════════════════════════════════════════════════════════════════╗
+║     Make slot duration a runtime configuration. Then reduce it.      ║
+╚══════════════════════════════════════════════════════════════════════╝</pre>
 
-        <section class="block" id="problem">
+<p>This EIP turns SLOT_DURATION_MS from a compile-time constant into a
+fork-activated runtime parameter on the consensus layer, then uses
+that infrastructure to reduce slot duration from 12 seconds to
+8 seconds. Block gas limits and blob parameters scale proportionally
+to maintain constant throughput per unit time.</p>
+</section>
+
+<section id="problem">
 <pre>SEC 02 ── THE PROBLEM
 ════════════════════════════════════════════════════════════════════════</pre>
-            <div class="spread" style="margin-top: 1rem;">
-                <p><strong>Twelve seconds is slow.</strong></p>
-                <p>
-                    Slot time is the heartbeat of Ethereum's user experience. Every
-                    second shaved off means faster transaction landings, faster
-                    exchange deposits, and faster real-world payments. But the costs
-                    of long slots extend well beyond UX — they inflate arbitrage
-                    losses, widen the MEV extraction window, grant builders an
-                    exploitable free option on blocks, and force the ecosystem to
-                    build complex preconfirmation protocols to paper over the latency.
-                </p>
+
+<pre>╔══════════════════════════════════════════════════════════════════════╗
+║                       Twelve seconds is slow.                        ║
+╚══════════════════════════════════════════════════════════════════════╝</pre>
+
+<p>Slot time is the heartbeat of Ethereum's user experience. Every
+second shaved off means faster transaction landings, faster exchange
+deposits, and faster real-world payments. But the costs of long slots
+extend well beyond UX — they inflate arbitrage losses, widen the MEV
+extraction window, grant builders an exploitable free option on blocks,
+and force the ecosystem to build complex preconfirmation protocols to
+paper over the latency.</p>
+
 <pre>
-  CURRENT                                PROPOSED
-  12,000 ms                              8,000 ms
+12s ══════════════════════════════
+ 8s ════════════════════
 
-  ╔════════════════════════════════╗      ╔════════════════════╗
-  ║▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓║      ║▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓║
-  ╚════════════════════════════════╝      ╚════════════════════╝
-  ├─PROPOSE─┤──ATTEST──┤───AGG───┤       ├─PROPOSE─┤─ATTEST─┤AGG┤
+┌──────────────────┬────────────────┬────────────────┬─────────────────┐
+│                  │ CURRENT (12s)  │ PROPOSED (8s)  │ CHANGE          │
+├──────────────────┼────────────────┼────────────────┼─────────────────┤
+│ GAS / BLOCK      │    36,000,000  │    24,000,000  │ -33%            │
+│ BLOBS / BLOCK    │             6  │             4  │ -33%            │
+│ GAS / SECOND     │     1,500,000  │     1,500,000  │ = UNCHANGED     │
+│ BLOBS / SECOND   │           0.5  │           0.5  │ = UNCHANGED     │
+│ FINALITY         │       ~13 min  │     ~8.5 min   │ -33%            │
+└──────────────────┴────────────────┴────────────────┴─────────────────┘</pre>
 
-  GAS/BLOCK    ~36M                      GAS/BLOCK    ~24M
-  BLOBS/BLOCK  6                         BLOBS/BLOCK  4
-  ─────────────────────────────────      ─────────────────────────
-  GAS/SEC      1.5M  ◄── UNCHANGED      GAS/SEC      1.5M
-  BLOBS/SEC    0.5   ◄── UNCHANGED      BLOBS/SEC    0.5
-</pre>
-<pre>  ┌─ KEY INVARIANT ──────────────────────────────────────────────────┐
-  │                                                                  │
-  │  Throughput per second is preserved. Gas-per-second and          │
-  │  blobs-per-second remain constant — only the per-block           │
-  │  allocation changes.                                             │
-  │                                                                  │
-  └──────────────────────────────────────────────────────────────────┘</pre>
-            </div>
-        </section>
+<pre>┌─ KEY INVARIANT ──────────────────────────────────────────────────────┐
+│                                                                      │
+│  Throughput per second is preserved. Gas-per-second and              │
+│  blobs-per-second remain constant — only the per-block               │
+│  allocation changes.                                                 │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘</pre>
+</section>
 
-        <!-- ════════════════════════════════════════════ -->
-        <!--  SEC 03 — BENEFITS                          -->
-        <!-- ════════════════════════════════════════════ -->
-
-        <section class="block" id="benefits">
+<section id="benefits">
 <pre>SEC 03 ── BENEFITS
 ════════════════════════════════════════════════════════════════════════</pre>
-<pre style="margin-top: 1rem;">
-┌──────────────────┬──────────────────────────────────────┬─────────────────────┐
-│ DOMAIN           │ EFFECT                               │ METRIC              │
-├──────────────────┼──────────────────────────────────────┼─────────────────────┤
-│                  │                                      │                     │
-│ User Experience  │ Faster transaction landings,          │ -33% latency        │
-│                  │ exchange deposits, and payments.      │                     │
-│                  │ Ethereum begins to feel like modern   │                     │
-│                  │ financial infrastructure.              │                     │
-│                  │                                      │                     │
-├──────────────────┼──────────────────────────────────────┼─────────────────────┤
-│                  │                                      │                     │
-│ DEX Pricing      │ Arbitrage losses scale with           │ ~18% reduction      │
-│                  │ sqrt(inter-block time). Shorter       │ in arb losses       │
-│                  │ slots tighten on-chain pricing.       │                     │
-│                  │                                      │                     │
-├──────────────────┼──────────────────────────────────────┼─────────────────────┤
-│                  │                                      │                     │
-│ MEV              │ Shorter slots compress surplus per    │ Non-linear          │
-│                  │ block, squeezing the entire MEV       │ compression         │
-│                  │ supply chain.                         │                     │
-│                  │                                      │                     │
-├──────────────────┼──────────────────────────────────────┼─────────────────────┤
-│                  │                                      │                     │
-│ ePBS / Empty     │ Builder's free option on the block    │ Reduced option      │
-│ Blocks           │ shrinks with slot duration.           │ value               │
-│                  │ Mitigates the empty block problem.    │                     │
-│                  │                                      │                     │
-├──────────────────┼──────────────────────────────────────┼─────────────────────┤
-│                  │                                      │                     │
-│ Preconfirmations │ Attacks the root cause of latency.    │ Reduced             │
-│                  │ Less need for additional trust         │ complexity          │
-│                  │ assumptions and protocol complexity.   │                     │
-│                  │                                      │                     │
-├──────────────────┼──────────────────────────────────────┼─────────────────────┤
-│                  │                                      │                     │
-│ L2 Sequencing    │ Based rollups inherit L1 block time.  │ -33% L2 latency    │
-│                  │ Faster L1 = faster based rollups,     │                     │
-│                  │ zero rollup-side changes needed.      │                     │
-│                  │ L2 interop latency also decreases.    │                     │
-│                  │                                      │                     │
-└──────────────────┴──────────────────────────────────────┴─────────────────────┘
-</pre>
-        </section>
 
-        <!-- ════════════════════════════════════════════ -->
-        <!--  SEC 04 — APPROACH                          -->
-        <!-- ════════════════════════════════════════════ -->
+<pre>
+┌──────────────────┬────────────────────────────────┬──────────────────┐
+│ DOMAIN           │ EFFECT                         │ METRIC           │
+├──────────────────┼────────────────────────────────┼──────────────────┤
+│                  │                                │                  │
+│ User Experience  │ Faster confirmations, exchange │ -33% latency     │
+│                  │ deposits, and payments.        │                  │
+│                  │                                │                  │
+│ DEX Pricing      │ Arb losses scale with sqrt of  │ ~18% reduction   │
+│                  │ inter-block time. Tighter      │ in arb losses    │
+│                  │ on-chain pricing.              │                  │
+│                  │                                │                  │
+│ MEV              │ Compress surplus per block.    │ Non-linear       │
+│                  │ Squeezes the entire MEV        │ compression      │
+│                  │ supply chain.                  │                  │
+│                  │                                │                  │
+│ ePBS / Empty     │ Builder's free option on the   │ Reduced option   │
+│ Blocks           │ block shrinks with slot        │ value            │
+│                  │ duration.                      │                  │
+│                  │                                │                  │
+│ Preconfirmations │ Attacks root cause of latency. │ Reduced          │
+│                  │ Reduces need for extra trust   │ complexity       │
+│                  │ and protocol complexity.       │                  │
+│                  │                                │                  │
+│ L2 Sequencing    │ Based rollups inherit L1 block │ -33% L2 latency  │
+│                  │ time. Faster L1 = faster L2s,  │                  │
+│                  │ zero changes needed.           │                  │
+│                  │                                │                  │
+└──────────────────┴────────────────────────────────┴──────────────────┘</pre>
+</section>
 
-        <section class="block" id="approach">
+<section id="approach">
 <pre>SEC 04 ── APPROACH
 ════════════════════════════════════════════════════════════════════════</pre>
-            <div class="spread" style="margin-top: 1rem;">
-                <p>
-                    Nobody knows the safe minimum slot duration with today's client
-                    implementations. Rather than stalling on the choice of a number,
-                    the work is separated into three phases.
-                </p>
+
+<p>Nobody knows the safe minimum slot duration with today's client
+implementations. Rather than stalling on the choice of a number, the
+work is separated into three phases.</p>
+
 <pre>
-  PHASE 1                   PHASE 2                   PHASE 3
-  INFRASTRUCTURE      ───►  CHARACTERIZE        ───►  REDUCE
+┌───────────────────────┬───────────────────────┬──────────────────────┐
+│ PHASE 1               │ PHASE 2               │ PHASE 3              │
+│ INFRASTRUCTURE        │ CHARACTERIZE          │ REDUCE               │
+├───────────────────────┼───────────────────────┼──────────────────────┤
+│                       │                       │                      │
+│ Remove the 12-second  │ Map CL bottlenecks    │ Cut slot duration    │
+│ assumption. Make      │ via devnets and       │ based on empirical   │
+│ SLOT_DURATION_MS a    │ benchmarks. Blob      │ data. Fix client     │
+│ fork-activated        │ propagation, attest   │ constraints, reduce  │
+│ runtime config.       │ aggregation, block    │ further, iterate.    │
+│                       │ building.             │                      │
+│                       │                       │                      │
+│ [████████░░░░░░░░░░]  │ [░░░░░░░░░░░░░░░░░░]  │ [░░░░░░░░░░░░░░░░░░] │
+│  IN PROGRESS          │  PENDING              │  PENDING             │
+│                       │                       │                      │
+└───────────────────────┴───────────────────────┴──────────────────────┘</pre>
 
-  ┌───────────────────────┐ ┌───────────────────────┐ ┌───────────────────────┐
-  │                       │ │                       │ │                       │
-  │ Remove the 12-second  │ │ Systematically        │ │ Cut slot duration     │
-  │ assumption across all │ │ identify CL           │ │ based on empirical    │
-  │ clients. Make         │ │ bottlenecks through   │ │ results. Address      │
-  │ SLOT_DURATION_MS a    │ │ devnets &amp; benchmarks, │ │ client constraints,   │
-  │ fork-activated        │ │ analogous to the EL's │ │ reduce further as     │
-  │ runtime config.       │ │ bloat-nets and        │ │ headroom emerges.     │
-  │                       │ │ perf-nets.            │ │ Iterate.              │
-  │                       │ │                       │ │                       │
-  │ [████████░░░░░░░░░░]  │ │ [░░░░░░░░░░░░░░░░░░]  │ │ [░░░░░░░░░░░░░░░░░░]  │
-  │  IN PROGRESS          │ │  PENDING              │ │  PENDING              │
-  │                       │ │                       │ │                       │
-  └───────────────────────┘ └───────────────────────┘ └───────────────────────┘
-</pre>
-<pre>  ┌─ FALLBACK ────────────────────────────────────────────────────────┐
-  │                                                                  │
-  │  Phase 1 has standalone value regardless of the final number.    │
-  │  If analysis shows 12 seconds is optimal, the effort still       │
-  │  delivers cleaner client architecture, a comprehensive CL        │
-  │  performance characterization, and the readiness to reduce       │
-  │  when conditions permit.                                         │
-  │                                                                  │
-  └──────────────────────────────────────────────────────────────────┘</pre>
-            </div>
-        </section>
+<pre>┌─ FALLBACK ───────────────────────────────────────────────────────────┐
+│                                                                      │
+│  Phase 1 has standalone value regardless of the final number.        │
+│  If analysis shows 12 seconds is optimal, the effort still           │
+│  delivers cleaner client architecture, a comprehensive CL            │
+│  performance characterization, and the readiness to reduce           │
+│  when conditions permit.                                             │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘</pre>
+</section>
 
-        <!-- ════════════════════════════════════════════ -->
-        <!--  SEC 05 — SPECIFICATION                     -->
-        <!-- ════════════════════════════════════════════ -->
-
-        <section class="block" id="specification">
+<section id="specification">
 <pre>SEC 05 ── SPECIFICATION
 ════════════════════════════════════════════════════════════════════════</pre>
-            <div class="spread" style="margin-top: 1rem;">
-                <p>
-                    At &lt;FORK_EPOCH&gt;, the following constants take effect. The
-                    general principle: do not adjust a constant unless there is a
-                    concrete security or economic failure from leaving it unchanged.
-                </p>
+
+<p>At FORK_EPOCH, the following constants take effect. The general
+principle: do not adjust a constant unless there is a concrete
+security or economic failure from leaving it unchanged.</p>
+
 <pre>
-┌─────────────────────────────────┬────────────┬─────────────┬──────────────────────────────┐
-│ PARAMETER                       │ CURRENT    │ NEW         │ RATIONALE                    │
-├─────────────────────────────────┼────────────┼─────────────┼──────────────────────────────┤
-│ SLOT_DURATION_MS                │ 12,000     │ --&gt; 8,000   │ Target slot duration         │
-│ BASE_REWARD_FACTOR              │ 64         │ --&gt; 42      │ Preserve annual issuance     │
-│ INACTIVITY_PENALTY_QUOTIENT     │ 16,777,216 │ --&gt; 37,748,736 │ Quadratic penalty scaling │
-│ MIN_EPOCHS_FOR_BLOB_SIDECARS    │ 4,096      │ --&gt; 6,144   │ Preserve wall-clock DA window│
-│ CHURN_LIMIT_QUOTIENT            │ 65,536     │ --&gt; 98,304  │ Preserve weak subjectivity   │
-└─────────────────────────────────┴────────────┴─────────────┴──────────────────────────────┘
-</pre>
-                <p>
-                    Gas limit scales by new_slot_duration / old_slot_duration at the
-                    fork block. Normal gas limit voting resumes from the next block.
-                    Blob parameters scale proportionally via a new BLOB_SCHEDULE entry.
-                </p>
-            </div>
-        </section>
+┌──────────────────────────────────┬────────────────┬──────────────────┐
+│ PARAMETER                        │ CURRENT        │ NEW              │
+├──────────────────────────────────┼────────────────┼──────────────────┤
+│ SLOT_DURATION_MS                 │        12,000  │          8,000   │
+│ BASE_REWARD_FACTOR               │            64  │             42   │
+│ INACTIVITY_PENALTY_QUOTIENT      │    16,777,216  │     37,748,736   │
+│ MIN_EPOCHS_FOR_BLOB_SIDECARS     │         4,096  │          6,144   │
+│ CHURN_LIMIT_QUOTIENT             │        65,536  │         98,304   │
+└──────────────────────────────────┴────────────────┴──────────────────┘</pre>
 
-        <!-- ════════════════════════════════════════════ -->
-        <!--  SEC 06 — REFERENCES                        -->
-        <!-- ════════════════════════════════════════════ -->
+<p>Gas limit scales by new_slot_duration / old_slot_duration at the
+fork block. Normal gas limit voting resumes from the next block.
+Blob parameters scale proportionally via a new BLOB_SCHEDULE entry.</p>
+</section>
 
-        <section class="block" id="references">
+<footer id="references">
 <pre>SEC 06 ── REFERENCES
-════════════════════════════════════════════════════════════════════════</pre>
-            <div style="margin-top: 1rem;">
-<pre>
-  [1]  EIP-8198 on GitHub
-       <a href="https://github.com/ethereum/EIPs/pull/11426">https://github.com/ethereum/EIPs/pull/11426</a>
+════════════════════════════════════════════════════════════════════════
 
-  [2]  EthMagicians — EIP-8198 Discussion
-       <a href="https://ethereum-magicians.org/t/eip-8198-quick-slots/28057">https://ethereum-magicians.org/t/eip-8198-quick-slots/28057</a>
+[1] EIP-8198 on GitHub
+    <a href="https://github.com/ethereum/EIPs/pull/11426">https://github.com/ethereum/EIPs/pull/11426</a>
 
-  [3]  EthMagicians — The Case for Quick Slots
-       <a href="https://ethereum-magicians.org/t/the-case-for-quick-slots-in-hegota/27708">https://ethereum-magicians.org/t/the-case-for-quick-slots-in-hegota/27708</a>
+[2] EthMagicians — EIP-8198 Discussion
+    <a href="https://ethereum-magicians.org/t/eip-8198-quick-slots/28057">https://ethereum-magicians.org/t/eip-8198-quick-slots/28057</a>
+
+[3] EthMagicians — The Case for Quick Slots
+    <a href="https://ethereum-magicians.org/t/the-case-for-quick-slots-in-hegota/27708">https://ethereum-magicians.org/t/the-case-for-quick-slots-in-hegota/27708</a>
 
 ────────────────────────────────────────────────────────────────────────
-  EIP-8198 content is licensed under CC0. This page is an independent
-  summary intended to support community review and discussion.
-────────────────────────────────────────────────────────────────────────
-</pre>
-            </div>
-        </section>
+EIP-8198 content is licensed under CC0. This page is an independent
+summary intended to support community review and discussion.
+────────────────────────────────────────────────────────────────────────</pre>
+</footer>
 
-    </body>
+</body>
 </html>
