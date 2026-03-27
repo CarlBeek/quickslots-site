@@ -29,7 +29,7 @@
                 font-family: "IBM Plex Mono", monospace;
                 font-size: 1rem;
                 font-weight: 400;
-                background: #f4f1eb;
+                background: #f3eddf;
                 color: #1a1a18;
                 line-height: 1.6;
                 padding: 3rem 2rem 4rem;
@@ -75,7 +75,7 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                background: #f4f1eb;
+                background: #f3eddf;
                 padding: 0.4rem 0;
                 display: flex;
                 justify-content: center;
@@ -106,12 +106,12 @@
         <header>
             <pre>
 
-   ____  _    _ _____ _____ _  __   _____ _      ____ _______ _____
-  / __ \| |  | |_   _/ ____| |/ /  / ____| |    / __ \__   __/ ____|
- | |  | | |  | | | || |    | ' /  | (___ | |   | |  | | | | | (___
- | |  | | |  | | | || |    |  &lt;    \___ \| |   | |  | | | |  \___ \
- | |__| | |__| |_| || |____| . \   ____) | |___| |__| | | |  ____) |
-  \___\_\\____/|_____\_____|_|\_\ |_____/|______\____/  |_| |_____/
+    ____  _    _ _____ _____ _  __   _____ _      ____ _______ _____
+   / __ \| |  | |_   _/ ____| |/ /  / ____| |    / __ \__   __/ ____|
+  | |  | | |  | | | || |    | ' /  | (___ | |   | |  | | | | | (___
+  | |  | | |  | | | || |    |  &lt;    \___ \| |   | |  | | | |  \___ \
+  | |__| | |__| |_| || |____| . \   ____) | |___| |__| | | |  ____) |
+   \___\_\\____/|_____\_____|_|\_\ |_____/|______\____/  |_| |_____/
 
 ╔══════════════════════════════════════════════════════════════════════╗
 ║  ETHEREUM IMPROVEMENT PROPOSAL 8198                                  ║
@@ -197,8 +197,8 @@ SEC 02 ── THE PROBLEM
 
             <div id="ticker">
                 <div id="ticker-inner">
-                    <pre>12s [<span id="b12">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>]  <span id="t12">0 slots, 0 epochs</span>
- 8s [<span id="b8">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>]  <span id="t8">0 slots, 0 epochs</span></pre>
+                    <pre>12s ├<span id="b12">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>┤  <span id="t12">0 slots, 0 epochs</span>
+ 8s ├<span id="b8">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>┤  <span id="t8">0 slots, 0 epochs</span></pre>
                     <pre
                         style="text-align: right"
                     >WASTED: <span id="waste">0</span>s</pre>
@@ -361,7 +361,7 @@ SEC 05 ── SPECIFICATION
         <script>
             (function () {
                 var W = 30,
-                    F = "\u2588",
+                    F = "\u2593",
                     E = "\u2591",
                     g = document.getElementById.bind(document);
 
