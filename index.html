@@ -32,7 +32,7 @@
                 background: #f4f1eb;
                 color: #1a1a18;
                 line-height: 1.6;
-                padding: 3rem 2rem;
+                padding: 3rem 2rem 4rem;
                 max-width: 68rem;
                 margin: 0 auto;
             }
@@ -62,6 +62,19 @@
                 max-width: 72ch;
                 margin-bottom: 1rem;
             }
+            @keyframes blink{50%{opacity:0}}
+            .blink{animation:blink 1s step-end infinite}
+            #ticker{
+                position:fixed;
+                bottom:0;left:0;right:0;
+                background:#f4f1eb;
+                border-top:1px solid #1a1a18;
+                padding:.4rem 2rem;
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+            }
+            #ticker pre{margin:0;line-height:1.4}
             @media (max-width: 768px) {
                 html {
                     font-size: 12px;
@@ -94,7 +107,7 @@
            ,' /               ┌────────────────────────┐   O
          ,'  /_____,          │      QUICK SLOTS       │   ║
        .'____    ,'           │ ╔══════╤══════╤══════╗ │   ║
-            /  ,'             │ ║  8   │  8   │  8   ║ │   ║
+            /  ,'             │ ║  <span id="r1">8</span>   │  <span id="r2">8</span>   │  <span id="r3">8</span>   ║ │   ║
            / ,'               │ ╚══════╧══════╧══════╝ │===║
           /,'                 ├────────────────────────┤
          /'                   └────────────────────────┘
@@ -143,7 +156,7 @@ SEC 02 ── THE PROBLEM
 
             <pre>
 ╔══════════════════════════════════════════════════════════════════════╗
-║                       Twelve seconds is slow.                        ║
+║                       Twelve seconds is slow.<span class="blink">█</span>                       ║
 ╚══════════════════════════════════════════════════════════════════════╝</pre
             >
 
@@ -160,8 +173,12 @@ SEC 02 ── THE PROBLEM
 
             <pre>
 12s ══════════════════════════════
- 8s ════════════════════
+ 8s ════════════════════</pre>
 
+            <div id="ticker"><pre>12s [<span id="b12">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>]  <span id="t12">0 slots, 0 epochs</span>
+ 8s [<span id="b8">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>]  <span id="t8">0 slots, 0 epochs</span></pre><pre style="text-align:right">WASTED: <span id="waste">0</span>s</pre></div>
+
+            <pre>
 ┌──────────────────┬────────────────┬────────────────┬─────────────────┐
 │                  │ CURRENT (12s)  │ PROPOSED (8s)  │ CHANGE          │
 ├──────────────────┼────────────────┼────────────────┼─────────────────┤
@@ -316,5 +333,34 @@ EIP-8198 content is licensed under CC0. This page is an independent
 summary intended to support community review and discussion.
 ────────────────────────────────────────────────────────────────────────</pre>
         </footer>
+    <script>
+    (function(){
+      var W=30,F='\u2588',E='\u2591',g=document.getElementById.bind(document);
+
+      // Reel spin — cycle digits, land on 8
+      var r=[g('r1'),g('r2'),g('r3')],stops=[800,1100,1400],t0=performance.now();
+      (function spin(){
+        var e=performance.now()-t0;
+        for(var i=0;i<3;i++)r[i].textContent=e<stops[i]?(Math.random()*10|0):'8';
+        if(e<stops[2])requestAnimationFrame(spin);
+      })();
+
+      // Live race — 8s cycle, 12s bar never completes
+      var b12=g('b12'),b8=g('b8'),t12=g('t12'),t8=g('t8'),waste=g('waste');
+      var start=performance.now();
+      (function tick(){
+        var now=performance.now(),elapsed=now-start;
+        var e8=elapsed%8000,n8=Math.min(e8/8000*W+.5|0,W);
+        var e12=elapsed%12000,n12=Math.min(e12/12000*W+.5|0,W);
+        b12.textContent=F.repeat(n12)+E.repeat(W-n12);
+        b8.textContent=F.repeat(n8)+E.repeat(W-n8);
+        var s12=(elapsed/12000|0),s8=(elapsed/8000|0);
+        t12.textContent=s12+' slots, '+(s12/32|0)+' epochs';
+        t8.textContent=s8+' slots, '+(s8/32|0)+' epochs';
+        waste.textContent=s8*4;
+        requestAnimationFrame(tick);
+      })();
+    })();
+    </script>
     </body>
 </html>
