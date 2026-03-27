@@ -33,7 +33,7 @@
                 color: #1a1a18;
                 line-height: 1.6;
                 padding: 3rem 2rem 4rem;
-                max-width: 68rem;
+                max-width: calc(72ch + 4rem);
                 margin: 0 auto;
             }
             a {
@@ -50,7 +50,7 @@
                 font-size: inherit;
                 line-height: 1.5;
                 white-space: pre;
-                overflow-x: auto;
+                overflow-x: hidden;
             }
             section,
             header,
@@ -68,8 +68,14 @@
                 position:fixed;
                 bottom:0;left:0;right:0;
                 background:#f4f1eb;
+                padding:.4rem 0;
+                display:flex;
+                justify-content:center;
+            }
+            #ticker-inner{
+                width:72ch;
                 border-top:1px solid #1a1a18;
-                padding:.4rem 2rem;
+                padding-top:.4rem;
                 display:flex;
                 justify-content:space-between;
                 align-items:center;
@@ -175,8 +181,8 @@ SEC 02 ── THE PROBLEM
 12s ══════════════════════════════
  8s ════════════════════</pre>
 
-            <div id="ticker"><pre>12s [<span id="b12">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>]  <span id="t12">0 slots, 0 epochs</span>
- 8s [<span id="b8">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>]  <span id="t8">0 slots, 0 epochs</span></pre><pre style="text-align:right">WASTED: <span id="waste">0</span>s</pre></div>
+            <div id="ticker"><div id="ticker-inner"><pre>12s [<span id="b12">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>]  <span id="t12">0 slots, 0 epochs</span>
+ 8s [<span id="b8">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>]  <span id="t8">0 slots, 0 epochs</span></pre><pre style="text-align:right">WASTED: <span id="waste">0</span>s</pre></div></div>
 
             <pre>
 ┌──────────────────┬────────────────┬────────────────┬─────────────────┐
