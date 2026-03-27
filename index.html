@@ -105,16 +105,17 @@
     <body>
         <header>
             <pre>
+
+   ____  _    _ _____ _____ _  __   _____ _      ____ _______ _____
+  / __ \| |  | |_   _/ ____| |/ /  / ____| |    / __ \__   __/ ____|
+ | |  | | |  | | | || |    | ' /  | (___ | |   | |  | | | | | (___
+ | |  | | |  | | | || |    |  &lt;    \___ \| |   | |  | | | |  \___ \
+ | |__| | |__| |_| || |____| . \   ____) | |___| |__| | | |  ____) |
+  \___\_\\____/|_____\_____|_|\_\ |_____/|______\____/  |_| |_____/
+
 ╔══════════════════════════════════════════════════════════════════════╗
-║                                                                      ║
 ║  ETHEREUM IMPROVEMENT PROPOSAL 8198                                  ║
-║                                                                      ║
-║  QUICK SLOTS                                                         ║
 ║  Variable Slot Timing Infrastructure &amp; Slot Duration Reduction       ║
-║                                                                      ║
-║  STATUS   Draft                  TYPE   Standards Track / Core       ║
-║  AUTHOR   Carl Beekhuizen        DATE   2026-03-17                   ║
-║                                                                      ║
 ╚══════════════════════════════════════════════════════════════════════╝</pre
             >
             <pre>
@@ -187,8 +188,11 @@ SEC 02 ── THE PROBLEM
             </p>
 
             <pre>
-12s ══════════════════════════════
- 8s ════════════════════</pre
+12s ├▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓┤  CURRENT: 12,000 ms
+    │                        │           │
+ 8s ├▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓┤           │  PROPOSED: 8,000 ms (-33%)
+    │                        │           │
+    0s                       8s          12s</pre
             >
 
             <div id="ticker">
@@ -352,9 +356,7 @@ SEC 05 ── SPECIFICATION
     <a href="https://ethereum-magicians.org/t/27708">https://ethereum-magicians.org/t/27708</a>
 
 ────────────────────────────────────────────────────────────────────────
-EIP-8198 content is licensed under CC0. This page is an independent
-summary intended to support community review and discussion.
-────────────────────────────────────────────────────────────────────────</pre>
+</pre>
         </footer>
         <script>
             (function () {
