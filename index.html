@@ -92,6 +92,34 @@
                 margin: 0;
                 line-height: 1.4;
             }
+            @media print {
+                body {
+                    background: white;
+                    padding: 0;
+                    width: fit-content;
+                }
+                #ticker {
+                    display: none;
+                }
+                .blink {
+                    animation: none;
+                    visibility: hidden;
+                }
+                a[href]::after {
+                    content: " [" attr(href) "]";
+                    font-size: 0.85em;
+                }
+                a[href^="#"]::after,
+                pre a[href]::after {
+                    content: "";
+                }
+                pre, section, footer {
+                    break-inside: avoid;
+                }
+                section, header, nav, footer {
+                    margin-bottom: 1.5rem;
+                }
+            }
             @media (max-width: 768px) {
                 html {
                     font-size: 12px;
