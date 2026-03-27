@@ -24,6 +24,7 @@
                 font-size: 14px;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
+                scroll-behavior: smooth;
             }
             body {
                 font-family: "IBM Plex Mono", monospace;
@@ -36,8 +37,31 @@
                 max-width: calc(72ch + 4rem);
                 margin: 0 auto;
             }
+            body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0.04;
+                pointer-events: none;
+                z-index: 9999;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            }
             a {
                 color: inherit;
+                text-decoration-line: underline;
+                text-decoration-color: transparent;
+                text-underline-offset: 0.2em;
+                transition: text-decoration-color 0.2s;
+            }
+            a:hover {
+                text-decoration-color: currentColor;
+            }
+            ::selection {
+                background: #d4c5a9;
+                color: #1a1a18;
             }
             h1,
             h2,
@@ -57,6 +81,13 @@
             nav,
             footer {
                 margin-bottom: 3rem;
+                opacity: 0;
+                transform: translateY(1rem);
+                transition: opacity 0.6s ease, transform 0.6s ease;
+            }
+            .visible {
+                opacity: 1;
+                transform: none;
             }
             p {
                 max-width: 72ch;
@@ -79,6 +110,14 @@
                 padding: 0.4rem 0;
                 display: flex;
                 justify-content: center;
+                box-shadow: 0 -4px 12px rgba(26, 26, 24, 0.04);
+                opacity: 0;
+                transform: translateY(100%);
+                transition: opacity 0.6s ease, transform 0.6s ease;
+            }
+            #ticker.visible {
+                opacity: 1;
+                transform: none;
             }
             #ticker-inner {
                 width: 72ch;
@@ -146,7 +185,9 @@
 03 ── <a href="#benefits">Benefits</a>
 04 ── <a href="#approach">Approach</a>
 05 ── <a href="#specification">Specification</a>
-06 ── <a href="#references">References</a>
+06 ── <a href="#rationale">Rationale</a>
+07 ── <a href="#security">Security</a>
+08 ── <a href="#references">References</a>
 ────────────────────────────────────────────────────────────────────────</pre>
         </nav>
 
@@ -193,34 +234,20 @@ SEC 02 ── THE PROBLEM
                 latency.
             </p>
 
+            <p>
+                Arbitrage losses scale with the square root of inter-block
+                time [4]. Moving from 12 to 8 seconds yields roughly 18%
+                tighter on-chain pricing. Shorter slots also shrink the
+                builder's free option on blocks [5], reducing the incentive
+                to submit empty blocks under ePBS.
+            </p>
+
             <pre>
 12s ├▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓┤  CURRENT: 12,000 ms
     │                        │           │
  8s ├▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓┤           │  PROPOSED: 8,000 ms (-33%)
     │                        │           │
     0s                       8s          12s</pre
-            >
-
-            <div id="ticker">
-                <div id="ticker-inner">
-                    <pre>12s ├<span id="b12">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>┤  <span id="t12">0 slots</span>
- 8s ├<span id="b8">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>┤  <span id="t8">0 slots</span></pre>
-                    <pre
-                        style="text-align: right"
-                    >WASTED: <span id="waste">0</span>s</pre>
-                </div>
-            </div>
-
-            <pre>
-┌──────────────────┬────────────────┬────────────────┬─────────────────┐
-│                  │ CURRENT (12s)  │ PROPOSED (8s)  │ CHANGE          │
-├──────────────────┼────────────────┼────────────────┼─────────────────┤
-│ GAS / BLOCK      │    36,000,000  │    24,000,000  │ -33%            │
-│ BLOBS / BLOCK    │             6  │             4  │ -33%            │
-│ GAS / SECOND     │     1,500,000  │     1,500,000  │ = UNCHANGED     │
-│ BLOBS / SECOND   │           0.5  │           0.5  │ = UNCHANGED     │
-│ FINALITY         │       ~13 min  │     ~8.5 min   │ -33%            │
-└──────────────────┴────────────────┴────────────────┴─────────────────┘</pre
             >
 
             <pre>
@@ -303,6 +330,14 @@ SEC 04 ── APPROACH
 └───────────────────────┴───────────────────────┴──────────────────────┘</pre
             >
 
+            <p>
+                Six seconds would be ideal, but given this work is designed as
+                a non-headliner alongside FOCIL (EIP-7805), eight seconds is
+                the realistic first target. Even ten seconds would deliver a
+                meaningful improvement. The variable slot timing infrastructure
+                is largely orthogonal to FOCIL, so both advance in parallel.
+            </p>
+
             <pre>
 ┌─ FALLBACK ───────────────────────────────────────────────────────────┐
 │                                                                      │
@@ -340,36 +375,178 @@ SEC 05 ── SPECIFICATION
 └──────────────────────────────────┴────────────────┴──────────────────┘</pre
             >
 
+            <pre>
+┌──────────────────┬────────────────┬────────────────┬─────────────────┐
+│                  │ CURRENT (12s)  │ PROPOSED (8s)  │ CHANGE          │
+├──────────────────┼────────────────┼────────────────┼─────────────────┤
+│ GAS / BLOCK      │    36,000,000  │    24,000,000  │ -33%            │
+│ BLOBS / BLOCK    │             6  │             4  │ -33%            │
+│ GAS / SECOND     │     1,500,000  │     1,500,000  │ = UNCHANGED     │
+│ BLOBS / SECOND   │           0.5  │           0.5  │ = UNCHANGED     │
+│ FINALITY         │       ~13 min  │     ~8.5 min   │ -33%            │
+└──────────────────┴────────────────┴────────────────┴─────────────────┘</pre
+            >
+
             <p>
-                Gas limit scales by new_slot_duration / old_slot_duration at the
-                fork block. Normal gas limit voting resumes from the next block.
-                Blob parameters scale proportionally via a new BLOB_SCHEDULE
-                entry.
+                Gas limit scales by new_slot_duration / old_slot_duration,
+                enforced at the fork block rather than left to validator
+                voting. Without enforcement, the +/-1/1024-per-block voting
+                mechanism would take ~45 minutes to converge, during which
+                gas-per-second throughput could overshoot the target by up to
+                50%. Normal voting resumes from the next block. Blob parameters
+                scale proportionally via a new BLOB_SCHEDULE entry.
+            </p>
+
+            <p>
+                Requires a hard fork. CL clients bear most of the change:
+                replacing hardcoded 12-second slot assumptions with fork-aware
+                timing derivations. EL impact is limited to a one-time gas
+                limit and blob parameter adjustment at the fork boundary.
             </p>
         </section>
 
+        <section id="rationale">
+            <pre>
+SEC 06 ── RATIONALE
+════════════════════════════════════════════════════════════════════════</pre
+            >
+
+            <pre>
+┌─ GUIDING PRINCIPLE ─────────────────────────────────────────────────┐
+│                                                                      │
+│  Do not adjust a constant unless there is a concrete security or     │
+│  economic failure from leaving it unchanged.                         │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘</pre
+            >
+
+            <p>
+                Most slot- and epoch-denominated constants have generous
+                margins that absorb the change without adjustment. For
+                example, EPOCHS_PER_SLASHINGS_VECTOR shrinks from ~36 to
+                ~24 days but remains far longer than any plausible attack
+                window. Four categories do require scaling:
+            </p>
+
+            <p>
+                Issuance: BASE_REWARD_FACTOR scales linearly with epoch
+                duration to preserve annualized yield. The integer
+                truncation (42 vs. the ideal 42.667) under-issues by
+                ~1.6%, less than typical participation-rate fluctuations.
+            </p>
+
+            <p>
+                Inactivity leak: the cumulative penalty is quadratic in
+                epoch count. The quotient scales by the square of the
+                epoch-duration ratio to preserve the wall-clock leak rate.
+            </p>
+
+            <p>
+                Data availability: rollup challenge periods (~7 days)
+                create a hard external dependency. Sidecar retention
+                windows scale inversely to preserve the same wall-clock
+                duration.
+            </p>
+
+            <p>
+                Churn limits: per-epoch churn limits scale to preserve the
+                wall-clock weak subjectivity period. Quotients (which are
+                divisors) scale by old/new.
+            </p>
+        </section>
+
+        <section id="security">
+            <pre>
+SEC 07 ── SECURITY
+════════════════════════════════════════════════════════════════════════</pre
+            >
+
+            <pre>
+┌──────────────────────────────────────────────────────────────────────┐
+│                                                                      │
+│  Network propagation: tighter slots shrink the window for block      │
+│  propagation, validation, and attestation aggregation. Whether       │
+│  the resulting absolute deadlines remain feasible is a Phase 2       │
+│  question; BPS values may need tuning based on empirical data.       │
+│                                                                      │
+│  Validator hardware: per-second computational and bandwidth          │
+│  demands rise, but peak per-payload bandwidth is unchanged --        │
+│  gas/block and blobs/block decrease proportionally with slot         │
+│  duration.                                                           │
+│                                                                      │
+│  Weak subjectivity: churn limits are scaled to preserve the          │
+│  current wall-clock churn rate, maintaining the existing weak        │
+│  subjectivity period.                                                │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘</pre
+            >
+        </section>
+
         <footer id="references">
-            <pre>SEC 06 ── REFERENCES
+            <pre>SEC 08 ── REFERENCES
 ════════════════════════════════════════════════════════════════════════
 
 [1] EIP-8198 on GitHub
     <a href="https://github.com/ethereum/EIPs/pull/11426">https://github.com/ethereum/EIPs/pull/11426</a>
 
-[2] EthMagicians — EIP-8198 Discussion
+[2] EthMagicians -- EIP-8198 Discussion
     <a href="https://ethereum-magicians.org/t/28057">https://ethereum-magicians.org/t/28057</a>
 
-[3] EthMagicians — The Case for Quick Slots
+[3] EthMagicians -- The Case for Quick Slots
     <a href="https://ethereum-magicians.org/t/27708">https://ethereum-magicians.org/t/27708</a>
+
+[4] Milionis et al. -- Arbitrage, Block Times, and LP Profits
+    <a href="https://ethresear.ch/t/19444">https://ethresear.ch/t/19444</a>
+
+[5] The ePBS Free Option Problem
+    <a href="https://arxiv.org/abs/2509.24849">https://arxiv.org/abs/2509.24849</a>
+
+[6] Consensus Specs -- Variable Slot Duration (PR #4476)
+    <a href="https://github.com/ethereum/consensus-specs/pull/4476">https://github.com/ethereum/consensus-specs/pull/4476</a>
 
 ────────────────────────────────────────────────────────────────────────
 </pre>
         </footer>
+
+        <div id="ticker">
+            <div id="ticker-inner">
+                <pre>12s ├<span id="b12">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>┤  <span id="t12">0 slots</span>
+ 8s ├<span id="b8">░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</span>┤  <span id="t8">0 slots</span></pre>
+                <pre
+                    style="text-align: right"
+                >WASTED: <span id="waste">0</span>s</pre>
+            </div>
+        </div>
+
         <script>
             (function () {
                 var W = 30,
                     F = "\u2593",
                     E = "\u2591",
                     g = document.getElementById.bind(document);
+
+                // Fade in sections on scroll
+                var observer = new IntersectionObserver(
+                    function (entries) {
+                        entries.forEach(function (entry) {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add("visible");
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    },
+                    { threshold: 0.1 },
+                );
+                document
+                    .querySelectorAll("section, header, nav, footer")
+                    .forEach(function (el) {
+                        observer.observe(el);
+                    });
+
+                // Slide ticker up after initial load
+                setTimeout(function () {
+                    g("ticker").classList.add("visible");
+                }, 1200);
 
                 // Handle pull, then reel spin
                 var r = [g("r1"), g("r2"), g("r3")];
